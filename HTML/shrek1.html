@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shrek (2001)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="header">
+  <h1>SHREK</h1>
+  <p>2001</p>
+</div>
+
+<div id="nav">
+  <ul>
+    <li><a href="index.html">Acasă</a></li>
+    <li><a href="shrek1.html" class="active">Film 1</a></li>
+    <li><a href="shrek2.html">Film 2</a></li>
+    <li><a href="shrek3.html">Film 3</a></li>
+    <li><a href="shrek4.html">Film 4</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+  </ul>
+</div>
+
+<div id="main">
+
+  <div id="film-info">
+    <img src="https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/shrek_27.jpg" alt="Shrek 2001">
+    <div id="film-meta">
+      <p><b>An:</b> 2001</p>
+      <p><b>Regizor:</b> Andrew Adamson, Vicky Jenson</p>
+      <p><b>Durată:</b> 90 minute</p>
+      <p><b>Premii:</b> Oscar — Cel mai bun film de animație</p>
+    </div>
+  </div>
+
+  <div id="story">
+    <h2 class="section-title">Povestea</h2>
+    <hr class="section-divider">
+    <p>Un ogor verde își dorește să trăiască liniștit în mlaștina lui. Dar viața lui devine haotică când lordul Farquaad decide să-și curețe regatul de toate creaturile de basm, trimițându-le în mlaștina lui Shrek.</p>
+    <p>Pentru a-și recăpăta liniștea, Shrek face un târg: va salva Prințesa Fiona din turnul ei păzit de un dragon. Împreună cu Măgarul, Shrek pornește într-o aventură care îi va schimba viața.</p>
+  </div>
+
+  <div id="characters">
+    <h2 class="section-title">Personaje</h2>
+    <hr class="section-divider">
+    <table class="char-table">
+      <tr>
+        <th>Personaj</th>
+        <th>Descriere</th>
+      </tr>
+      <tr>
+        <td class="char-img">
+          <a href="index.html">
+            <img src="https://pbs.twimg.com/profile_images/829904718101041153/5BiJNe71_400x400.jpg" alt="Shrek">
+          </a>
+          <strong>Shrek</strong>
+        </td>
+        <td>Un ogor verde care își dorește să fie lăsat în pace. Descoperă că viața este mai frumoasă când o împărtășești cu alții.</td>
+      </tr>
+      <tr>
+        <td class="char-img">
+          <a href="shrek2.html">
+            <img src="https://intheirownleague.com/wp-content/uploads/2021/05/fiona-main.jpg?w=852&h=644&crop=1" alt="Fiona">
+          </a>
+          <strong>Fiona</strong>
+        </td>
+        <td>O prințesă cu un secret. Frumoasă, puternică și independentă.</td>
+      </tr>
+      <tr>
+        <td class="char-img">
+          <a href="shrek3.html">
+            <img src="https://citaty.info/files/portraits/osel.jpg" alt="Măgarul">
+          </a>
+          <strong>Măgarul</strong>
+        </td>
+        <td>Cel mai bun prieten al lui Shrek. Vorbăreț și mereu optimist.</td>
+      </tr>
+      <tr>
+        <td class="char-img">
+          <img src="https://pbs.twimg.com/media/GZ7R490WIAAbRdK.jpg" alt="Lord Farquaad">
+          <strong>Lord Farquaad</strong>
+        </td>
+        <td>Liderul regatului Duloc. Mic dar crud, obsesia lui pentru perfecțiune îl face antagonistul perfect.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div>
+    <h2 class="section-title">Momente importante</h2>
+    <hr class="section-divider">
+    <div class="highlights-grid">
+      <div class="highlight-card">
+        <h4>Bătălia cu Dragonul</h4>
+        <p>Shrek și Măgarul trebuie să salveze Prințesa Fiona din turnul păzit de un dragon feminin.</p>
+      </div>
+      <div class="highlight-card">
+        <h4>Sărutul dragostei adevărate</h4>
+        <p>Finalul în care Shrek și Fiona descoperă că dragostea adevărată nu are de-a face cu aparențele.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-nav">
+    <a href="index.html" class="btn-link">← Înapoi la pagina principală</a>
+    <a href="shrek2.html" class="btn-link">Continuă cu Shrek 2 →</a>
+  </div>
+
+</div>
+
+<div id="footer">
+  <p>Realizat: Cozlovschi Ana</p>
+</div>
+
+<script>
+  (function () {
+    'use strict';
+
+    function initParticles() {
+      const canvas = document.createElement('canvas');
+      canvas.id = 'bg-particles';
+      Object.assign(canvas.style, {
+        position: 'fixed', top: '0', left: '0',
+        width: '100%', height: '100%',
+        pointerEvents: 'none', zIndex: '0', opacity: '.45'
+      });
+      document.body.prepend(canvas);
+      const ctx = canvas.getContext('2d');
+      function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+      resize();
+      window.addEventListener('resize', resize);
+      const pts = Array.from({ length: 48 }, () => ({
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
+        r: Math.random() * 2.2 + 0.6,
+        vx: (Math.random() - .5) * .38,
+        vy: (Math.random() - .5) * .38,
+        a: Math.random(),
+        da: (Math.random() - .5) * .015,
+        hue: Math.random() > .55 ? '#8cc63f' : '#c8f060'
+      }));
+      (function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pts.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          p.a += p.da;
+          if (p.a <= 0 || p.a >= 1) p.da *= -1;
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.hue;
+          ctx.globalAlpha = p.a * .65;
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(loop);
+      })();
+    }
+
+    function initTypingEffect() {
+      const sub = document.querySelector('#header p');
+      if (!sub) return;
+      const original = sub.textContent.trim();
+      sub.textContent = '';
+      sub.style.borderRight = '2px solid #8cc63f';
+      let i = 0;
+      const type = setInterval(() => {
+        sub.textContent += original[i++];
+        if (i >= original.length) {
+          clearInterval(type);
+          setTimeout(() => { sub.style.borderRight = 'none'; }, 1800);
+        }
+      }, 55);
+    }
+
+    function initScrollReveal() {
+      const targets = document.querySelectorAll(
+              '.film-card, .highlight-card, .theme-card, #film-info, #story, #characters, .compare-table, #toc, #hero, #quiz-section'
+      );
+      const s = document.createElement('style');
+      s.textContent = '.sr-hidden{opacity:0;transform:translateY(30px);transition:opacity .55s ease,transform .55s ease}.sr-visible{opacity:1!important;transform:translateY(0)!important}';
+      document.head.appendChild(s);
+      targets.forEach((el, i) => {
+        el.classList.add('sr-hidden');
+        el.style.transitionDelay = (i % 4) * 0.08 + 's';
+      });
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('sr-visible'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+      targets.forEach(el => io.observe(el));
+    }
+
+    function initRipple() {
+      const rStyle = document.createElement('style');
+      rStyle.textContent = '@keyframes rippleAnim{to{transform:scale(4);opacity:0}}';
+      document.head.appendChild(rStyle);
+      document.querySelectorAll('.btn-link, #nav ul li a').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          const rect = this.getBoundingClientRect();
+          const ripple = document.createElement('span');
+          Object.assign(ripple.style, {
+            position:'absolute', borderRadius:'50%',
+            background:'rgba(140,198,63,.35)', transform:'scale(0)',
+            animation:'rippleAnim .5s linear',
+            width:'60px', height:'60px',
+            left:(e.clientX-rect.left-30)+'px',
+            top:(e.clientY-rect.top-30)+'px',
+            pointerEvents:'none'
+          });
+          this.style.position = 'relative';
+          this.style.overflow = 'hidden';
+          this.appendChild(ripple);
+          setTimeout(() => ripple.remove(), 550);
+        });
+      });
+    }
+
+    function animateCounters() {
+      document.querySelectorAll('#film-meta p').forEach(p => {
+        const match = p.textContent.match(/(\$[\d,]+\s*milioane|[\d]+\s*minute)/);
+        if (!match) return;
+        const numMatch = p.textContent.match(/[\d]+/);
+        if (!numMatch) return;
+        const target = parseInt(numMatch[0]);
+        const before = p.innerHTML.split(numMatch[0])[0];
+        const after  = p.innerHTML.split(numMatch[0])[1];
+        let current = 0;
+        const step = Math.ceil(target / 60);
+        const el = document.createElement('span');
+        el.style.color = '#c8f060';
+        el.textContent = '0';
+        p.innerHTML = '';
+        p.insertAdjacentHTML('beforeend', before);
+        p.appendChild(el);
+        p.insertAdjacentHTML('beforeend', after);
+        const io = new IntersectionObserver(entries => {
+          if (!entries[0].isIntersecting) return;
+          io.disconnect();
+          const t = setInterval(() => {
+            current = Math.min(current + step, target);
+            el.textContent = current;
+            if (current >= target) clearInterval(t);
+          }, 20);
+        }, { threshold: 0.5 });
+        io.observe(p);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initParticles();
+      initTypingEffect();
+      initScrollReveal();
+      initRipple();
+      animateCounters();
+    });
+  })();
+</script>
+</body>
+</html>

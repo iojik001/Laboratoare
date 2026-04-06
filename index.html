@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHREK - Pagina Principală</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="header">
+  <h1>SHREK</h1>
+  <p>Un ogor. O familie. O lume de basm.</p>
+</div>
+
+<div id="nav">
+  <ul>
+    <li><a href="index.html" class="active">Acasă</a></li>
+    <li><a href="shrek1.html">Film 1</a></li>
+    <li><a href="shrek2.html">Film 2</a></li>
+    <li><a href="shrek3.html">Film 3</a></li>
+    <li><a href="shrek4.html">Film 4</a></li>
+  </ul>
+</div>
+
+<div id="main">
+
+  <div id="hero">
+    <p>Lumea lui Shrek — un ogor care și-a dorit liniște, dar a găsit familie.</p>
+  </div>
+
+  <div id="toc">
+    <h2>Cuprins</h2>
+    <ul>
+      <li><a href="shrek1.html">Shrek (2001) — Primul film</a></li>
+      <li><a href="shrek2.html">Shrek 2 (2004) — Întâlnirea cu socrii</a></li>
+      <li><a href="shrek3.html">Shrek al Treilea (2007) — Căutarea moștenitorului</a></li>
+      <li><a href="shrek4.html">Shrek Forever After (2010) — Finalul seriei</a></li>
+    </ul>
+  </div>
+
+  <div id="character-section">
+    <h2>Explorează personajele (Click pe imagine)</h2>
+    <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/7906079/shrek.jpg?w=1600&h=900&fit=crop"
+         usemap="#charactermap" alt="Personaje Shrek">
+    <map name="charactermap">
+      <area shape="rect" coords="0,0,200,300"   href="shrek1.html" alt="Shrek"  title="Shrek">
+      <area shape="rect" coords="200,0,400,300" href="shrek2.html" alt="Fiona"  title="Fiona">
+      <area shape="rect" coords="400,0,600,300" href="shrek3.html" alt="Măgar"  title="Măgar">
+      <area shape="rect" coords="600,0,800,300" href="shrek4.html" alt="Pisica" title="Pisica">
+    </map>
+  </div>
+
+  <div id="films-section">
+    <h2 class="section-title">Filmele</h2>
+    <hr class="section-divider">
+    <div id="films-grid">
+
+      <div class="film-card">
+        <a href="shrek1.html">
+          <img src="https://a.ltrbxd.com/resized/sm/upload/o9/yg/sp/gt/shrek-1200-1200-675-675-crop-000000.jpg?v=53e83d5bf2" alt="Shrek 2001">
+        </a>
+        <div class="film-card-body">
+          <h3>Shrek (2001)</h3>
+          <p>Un ogor care trebuie să salveze o prințesă pentru a-și recăpăta mlaștina.</p>
+        </div>
+      </div>
+
+      <div class="film-card">
+        <a href="shrek2.html">
+          <img src="https://images.bauerhosting.com/legacy/empire-tmdb/films/809/images/gdFAYLb5NR5HqcEKnPloOM6fX4B.jpg?ar=16%3A9&fit=crop&crop=top&auto=format&w=undefined&q=80" alt="Shrek 2">
+        </a>
+        <div class="film-card-body">
+          <h3>Shrek 2 (2004)</h3>
+          <p>Întâlnirea cu socrii. Nu totul merge conform planului.</p>
+        </div>
+      </div>
+
+      <div class="film-card">
+        <a href="shrek3.html">
+          <img src="https://images.bauerhosting.com/legacy/empire-tmdb/films/810/images/7fT1IogBbxM6S7SOIGSe7BXLEMq.jpg?ar=16%3A9&fit=crop&crop=top&auto=format&w=undefined&q=80" alt="Shrek 3">
+        </a>
+        <div class="film-card-body">
+          <h3>Shrek al Treilea (2007)</h3>
+          <p>Căutarea unui moștenitor pentru regat. Shrek nu vrea să fie rege.</p>
+        </div>
+      </div>
+
+      <div class="film-card">
+        <a href="shrek4.html">
+          <img src="https://cdn.administrace.tv/2023/04/07/hd/3b8de29b04237144c6312b9fef9b5ccc.jpg" alt="Shrek 4">
+        </a>
+        <div class="film-card-body">
+          <h3>Shrek Forever After (2010)</h3>
+          <p>Ce-ar fi dacă Shrek nu ar fi existat niciodată?</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div id="footer">
+  <p>Realizat: Cozlovschi Ana</p>
+</div>
+<script>
+  (function () {
+    'use strict';
+    function initParticles() {
+      const canvas = document.createElement('canvas');
+      canvas.id = 'bg-particles';
+      Object.assign(canvas.style, { position:'fixed', top:'0', left:'0', width:'100%', height:'100%', pointerEvents:'none', zIndex:'0', opacity:'.45' });
+      document.body.prepend(canvas);
+      const ctx = canvas.getContext('2d');
+      function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+      resize(); window.addEventListener('resize', resize);
+      const pts = Array.from({length:48}, () => ({ x:Math.random()*innerWidth, y:Math.random()*innerHeight, r:Math.random()*2.2+0.6, vx:(Math.random()-.5)*.38, vy:(Math.random()-.5)*.38, a:Math.random(), da:(Math.random()-.5)*.015, hue:Math.random()>.55?'#8cc63f':'#c8f060' }));
+      (function loop() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        pts.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.a+=p.da; if(p.a<=0||p.a>=1)p.da*=-1; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.hue; ctx.globalAlpha=p.a*.65; ctx.fill(); });
+        ctx.globalAlpha=1; requestAnimationFrame(loop);
+      })();
+    }
+    function initTypingEffect() {
+      const sub = document.querySelector('#header p'); if(!sub) return;
+      const original = sub.textContent.trim(); sub.textContent=''; sub.style.borderRight='2px solid #8cc63f';
+      let i=0; const type=setInterval(()=>{ sub.textContent+=original[i++]; if(i>=original.length){ clearInterval(type); setTimeout(()=>{ sub.style.borderRight='none'; },1800); } },55);
+    }
+    function initScrollReveal() {
+      const targets = document.querySelectorAll('.film-card,.highlight-card,.theme-card,#film-info,#story,#characters,#toc,#hero');
+      const s=document.createElement('style'); s.textContent='.sr-hidden{opacity:0;transform:translateY(30px);transition:opacity .55s ease,transform .55s ease}.sr-visible{opacity:1!important;transform:translateY(0)!important}'; document.head.appendChild(s);
+      targets.forEach((el,i)=>{ el.classList.add('sr-hidden'); el.style.transitionDelay=(i%4)*0.08+'s'; });
+      const io=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('sr-visible');io.unobserve(e.target);} }); },{threshold:0.12});
+      targets.forEach(el=>io.observe(el));
+    }
+    function initRipple() {
+      const rStyle=document.createElement('style'); rStyle.textContent='@keyframes rippleAnim{to{transform:scale(4);opacity:0}}'; document.head.appendChild(rStyle);
+      document.querySelectorAll('.btn-link,#nav ul li a').forEach(btn=>{ btn.addEventListener('click',function(e){ const rect=this.getBoundingClientRect(); const ripple=document.createElement('span'); Object.assign(ripple.style,{position:'absolute',borderRadius:'50%',background:'rgba(140,198,63,.35)',transform:'scale(0)',animation:'rippleAnim .5s linear',width:'60px',height:'60px',left:(e.clientX-rect.left-30)+'px',top:(e.clientY-rect.top-30)+'px',pointerEvents:'none'}); this.style.position='relative'; this.style.overflow='hidden'; this.appendChild(ripple); setTimeout(()=>ripple.remove(),550); }); });
+    }
+    document.addEventListener('DOMContentLoaded',()=>{ initParticles(); initTypingEffect(); initScrollReveal(); initRipple(); });
+  })();
+</script>
+</body>
+</html>

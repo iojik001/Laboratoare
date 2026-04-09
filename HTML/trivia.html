@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shrek Trivia — AJAX</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <style>
+    /* ══════════════════════════════════════
+       TRIVIA PAGE
+    ══════════════════════════════════════ */
+    #trivia-wrapper {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 10px 0 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Intro */
+    #trivia-intro {
+      text-align: center;
+      padding: 30px 32px;
+      background: rgba(0,0,0,.32);
+      border: 1px solid rgba(140,198,63,.22);
+      border-radius: 16px;
+      margin-bottom: 32px;
+    }
+    #trivia-intro h2 { font-size: 1.6rem; color: #c8f060; letter-spacing: .14em; margin-bottom: 8px; }
+    #trivia-intro p  { color: #b0cc90; font-size: .97rem; line-height: 1.7; }
+
+    /* Scor */
+    #score-bar {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 28px;
+    }
+    .score-box {
+      text-align: center;
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(140,198,63,.22);
+      border-radius: 12px;
+      padding: 14px 28px;
+      min-width: 100px;
+    }
+    .score-box .score-num {
+      font-size: 2rem;
+      font-weight: bold;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .score-box .score-label {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #6a9040;
+    }
+    #score-correct .score-num  { color: #c8f060; }
+    #score-wrong .score-num    { color: #ff9090; }
+    #score-total .score-num    { color: #8cc63f; }
+
+    /* Card întrebare */
+    #question-card {
+      background: linear-gradient(160deg, rgba(30,60,10,.92), rgba(14,34,4,.97));
+      border: 1px solid rgba(140,198,63,.28);
+      border-radius: 18px;
+      padding: 36px 38px;
+      margin-bottom: 20px;
+      min-height: 200px;
+      position: relative;
+    }
+    #question-card.loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      width: 44px; height: 44px;
+      border: 4px solid rgba(140,198,63,.2);
+      border-top-color: #8cc63f;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Întrebarea */
+    #question-number {
+      display: inline-block;
+      background: #2d5a0e;
+      color: #8cc63f;
+      font-size: .76rem;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      padding: 4px 14px;
+      border-radius: 99px;
+      margin-bottom: 18px;
+    }
+    #question-text {
+      font-size: 1.2rem;
+      color: #c8f060;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    /* Răspunsuri */
+    #answers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .answer-btn {
+      background: rgba(0,0,0,.38);
+      border: 2px solid rgba(140,198,63,.22);
+      border-radius: 10px;
+      color: #c8ddb0;
+      font-family: 'Georgia', serif;
+      font-size: .97rem;
+      padding: 14px 20px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: background .22s, border-color .22s, color .22s, transform .18s;
+    }
+    .answer-btn:hover:not(:disabled) {
+      background: rgba(140,198,63,.16);
+      border-color: #8cc63f;
+      color: #fff;
+      transform: translateX(6px);
+    }
+    .answer-btn:disabled { cursor: not-allowed; }
+    .answer-btn .letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      background: #2d5a0e;
+      border-radius: 50%;
+      font-size: .8rem;
+      font-weight: bold;
+      color: #8cc63f;
+      flex-shrink: 0;
+      transition: background .22s;
+    }
+
+    /* State: corect / greșit */
+    .answer-btn.correct {
+      background: rgba(80,180,80,.22) !important;
+      border-color: #6dcc6d !important;
+      color: #90ff90 !important;
+    }
+    .answer-btn.correct .letter { background: #2d7a2d; color: #90ff90; }
+
+    .answer-btn.wrong {
+      background: rgba(180,60,60,.22) !important;
+      border-color: #cc6060 !important;
+      color: #ff9090 !important;
+    }
+    .answer-btn.wrong .letter { background: #7a2d2d; color: #ff9090; }
+
+    /* Fact box */
+    #fact-box {
+      display: none;
+      margin-top: 20px;
+      padding: 16px 20px;
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(140,198,63,.3);
+      border-radius: 10px;
+      animation: fadeSlideIn .4s ease;
+    }
+    #fact-box .fact-label {
+      font-size: .75rem;
+      color: #8cc63f;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      margin-bottom: 6px;
+    }
+    #fact-box p { color: #c0dda0; font-size: .93rem; line-height: 1.65; }
+
+    @keyframes fadeSlideIn {
+      from { opacity:0; transform:translateY(12px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fadeSlideOut {
+      from { opacity:1; transform:translateY(0); }
+      to   { opacity:0; transform:translateY(-12px); }
+    }
+
+    /* Buton urmatoare */
+    #btn-next {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #2d5a0e, #4a8a1a);
+      border: 2px solid #8cc63f;
+      border-radius: 10px;
+      color: #c8f060;
+      font-family: 'Georgia', serif;
+      font-size: 1rem;
+      font-weight: bold;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .3s, transform .22s, box-shadow .3s;
+      display: none;
+    }
+    #btn-next:hover {
+      background: linear-gradient(135deg, #4a8a1a, #6aaa2a);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(140,198,63,.28);
+    }
+
+    /* Buton start */
+    #btn-start {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #2d5a0e, #4a8a1a);
+      border: 2px solid #8cc63f;
+      border-radius: 10px;
+      color: #c8f060;
+      font-family: 'Georgia', serif;
+      font-size: 1.05rem;
+      font-weight: bold;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .3s, transform .22s, box-shadow .3s;
+      margin-bottom: 20px;
+    }
+    #btn-start:hover {
+      background: linear-gradient(135deg, #4a8a1a, #6aaa2a);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(140,198,63,.28);
+    }
+
+    /* Badge AJAX */
+    .ajax-badge {
+      display: inline-block;
+      background: rgba(140,198,63,.18);
+      border: 1px solid rgba(140,198,63,.4);
+      border-radius: 99px;
+      padding: 5px 18px;
+      color: #8cc63f;
+      font-size: .76rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    /* Reset */
+    #btn-reset {
+      display: inline-block;
+      padding: 10px 22px;
+      background: rgba(0,0,0,.3);
+      border: 2px solid rgba(140,198,63,.3);
+      border-radius: 8px;
+      color: #8cc63f;
+      font-family: 'Georgia', serif;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: background .25s;
+      margin-top: 10px;
+    }
+    #btn-reset:hover { background: rgba(140,198,63,.15); color: #c8f060; }
+
+    @keyframes rippleAnim { to { transform:scale(4); opacity:0; } }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)}
+      40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+    }
+  </style>
+</head>
+<body>
+
+<div id="header">
+  <h1>SHREK TRIVIA</h1>
+  <p>Cât de bine cunoști universul Shrek?</p>
+</div>
+
+<div id="nav">
+  <ul>
+    <li><a href="../index.html">Acasă</a></li>
+    <li><a href="shrek1.html">Film 1</a></li>
+    <li><a href="shrek2.html">Film 2</a></li>
+    <li><a href="shrek3.html">Film 3</a></li>
+    <li><a href="shrek4.html">Film 4</a></li>
+    <li><a href="Quiz.html">Quiz</a></li>
+    <li><a href="../PHP/quiz.php">Formular</a></li>
+    <li><a href="trivia.html" class="active">Trivia</a></li>
+  </ul>
+</div>
+
+<div id="main">
+<div id="trivia-wrapper">
+
+  <!-- Intro -->
+  <div id="trivia-intro">
+    <span class="ajax-badge">⚡ AJAX — Întrebări fără refresh</span>
+    <h2>🧅 Shrek Trivia</h2>
+    <p>
+      La fiecare click pe <strong style="color:#c8f060">Întrebare nouă</strong>, o întrebare
+      random este încărcată din PHP prin <strong style="color:#c8f060">AJAX</strong> —
+      fără să se reîncarce pagina.
+    </p>
+  </div>
+
+  <!-- Scor -->
+  <div id="score-bar">
+    <div class="score-box" id="score-correct">
+      <div class="score-num" id="num-correct">0</div>
+      <div class="score-label">✅ Corecte</div>
+    </div>
+    <div class="score-box" id="score-wrong">
+      <div class="score-num" id="num-wrong">0</div>
+      <div class="score-label">❌ Greșite</div>
+    </div>
+    <div class="score-box" id="score-total">
+      <div class="score-num" id="num-total">0</div>
+      <div class="score-label">📋 Total</div>
+    </div>
+  </div>
+
+  <!-- Buton Start -->
+  <button id="btn-start" onclick="loadQuestion()">
+    🧅 Începe Trivia!
+  </button>
+
+  <!-- Card întrebare -->
+  <div id="question-card" style="display:none;">
+    <div id="question-inner">
+      <span id="question-number">Întrebarea #1</span>
+      <div id="question-text"></div>
+      <div id="answers-list"></div>
+      <div id="fact-box">
+        <div class="fact-label">💡 Știai că...</div>
+        <p id="fact-text"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buton următoarea -->
+  <button id="btn-next" onclick="loadQuestion()">
+    ➡ Întrebare nouă
+  </button>
+
+  <!-- Reset -->
+  <div style="text-align:center;">
+    <button id="btn-reset" onclick="resetScore()">🔄 Resetează scorul</button>
+  </div>
+
+  <!-- Nav jos -->
+  <div id="page-nav" style="margin-top:36px;">
+    <a href="../index.html" class="btn-link">← Pagina principală</a>
+    <a href="Quiz.html" class="btn-link">🧅 Quizul de personaje</a>
+  </div>
+
+</div>
+</div>
+
+<div id="footer">
+  <p>Realizat: Cozlovschi Ana &nbsp;|&nbsp; AJAX Trivia</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Particles ──────────────────────────────────────────
+  const canvas = document.createElement('canvas');
+  canvas.id = 'bg-particles';
+  Object.assign(canvas.style, { position:'fixed', top:'0', left:'0', width:'100%', height:'100%', pointerEvents:'none', zIndex:'0', opacity:'.4' });
+  document.body.prepend(canvas);
+  const ctx = canvas.getContext('2d');
+  function resizeC() { canvas.width = innerWidth; canvas.height = innerHeight; }
+  resizeC(); window.addEventListener('resize', resizeC);
+  const pts = Array.from({length:40}, () => ({
+    x:Math.random()*innerWidth, y:Math.random()*innerHeight,
+    r:Math.random()*2+0.6, vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3,
+    a:Math.random(), da:(Math.random()-.5)*.012,
+    hue:Math.random()>.55?'#8cc63f':'#c8f060'
+  }));
+  (function loop() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pts.forEach(p => {
+      p.x+=p.vx; p.y+=p.vy; p.a+=p.da;
+      if(p.a<=0||p.a>=1)p.da*=-1;
+      if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
+      if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.hue; ctx.globalAlpha=p.a*.6; ctx.fill();
+    });
+    ctx.globalAlpha=1; requestAnimationFrame(loop);
+  })();
+
+  // ── Typing effect ───────────────────────────────────────
+  const sub = document.querySelector('#header p');
+  if (sub) {
+    const original = sub.textContent.trim();
+    sub.textContent = '';
+    sub.style.borderRight = '2px solid #8cc63f';
+    let i = 0;
+    const t = setInterval(() => {
+      sub.textContent += original[i++];
+      if (i >= original.length) { clearInterval(t); setTimeout(()=>sub.style.borderRight='none', 1800); }
+    }, 70);
+  }
+
+  // ── Ripple ──────────────────────────────────────────────
+  document.querySelectorAll('#nav ul li a, .btn-link').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      const rect = this.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      Object.assign(ripple.style, {
+        position:'absolute', borderRadius:'50%', background:'rgba(140,198,63,.35)',
+        transform:'scale(0)', animation:'rippleAnim .5s linear',
+        width:'60px', height:'60px',
+        left:(e.clientX-rect.left-30)+'px', top:(e.clientY-rect.top-30)+'px',
+        pointerEvents:'none'
+      });
+      this.style.position='relative'; this.style.overflow='hidden';
+      this.appendChild(ripple); setTimeout(()=>ripple.remove(), 550);
+    });
+  });
+
+  // ══════════════════════════════════════════════════════
+  //  AJAX TRIVIA
+  // ══════════════════════════════════════════════════════
+
+  let score    = { correct: 0, wrong: 0, total: 0 };
+  let currentQ = null; // intrebarea curenta
+  let answered = false;
+
+  const letters = ['A', 'B', 'C', 'D'];
+
+  // ── Incarca intrebare noua prin AJAX ──────────────────
+  window.loadQuestion = function () {
+    const card = document.getElementById('question-card');
+    const btnStart = document.getElementById('btn-start');
+    const btnNext  = document.getElementById('btn-next');
+
+    // Ascunde butoanele
+    btnStart.style.display = 'none';
+    btnNext.style.display  = 'none';
+
+    // Arata cardul cu spinner
+    card.style.display = 'block';
+    card.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;min-height:140px;"><div class="spinner"></div></div>';
+
+    // AJAX request — XMLHttpRequest (clasic)
+    const excludeId = currentQ ? currentQ.id : -1;
+    const url = '../PHP/trivia.php?action=random&exclude=' + excludeId;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          if (data.success) {
+            currentQ = data;
+            answered = false;
+            renderQuestion(data);
+          } else {
+            showError('Eroare la încărcarea întrebării.');
+          }
+        } catch (e) {
+          showError('Răspuns invalid de la server.');
+        }
+      } else {
+        showError('Eroare server: ' + xhr.status);
+      }
+    };
+
+    xhr.onerror = function () {
+      showError('Nu s-a putut contacta serverul. Asigură-te că rulezi prin localhost.');
+    };
+
+    xhr.send();
+  };
+
+  // ── Afișează întrebarea ───────────────────────────────
+  function renderQuestion(data) {
+    const card = document.getElementById('question-card');
+
+    const answersHtml = data.answers.map((ans, i) => `
+      <button class="answer-btn" onclick="checkAnswer(${i})" data-index="${i}">
+        <span class="letter">${letters[i]}</span>
+        ${ans}
+      </button>
+    `).join('');
+
+    card.innerHTML = `
+      <span id="question-number">Întrebarea #${score.total + 1}</span>
+      <div id="question-text">${data.question}</div>
+      <div id="answers-list">${answersHtml}</div>
+      <div id="fact-box" style="display:none;">
+        <div class="fact-label">💡 Știai că...</div>
+        <p id="fact-text"></p>
+      </div>
+    `;
+
+    // Animatie intrare
+    card.style.animation = 'none';
+    void card.offsetHeight;
+    card.style.animation = 'fadeSlideIn .4s ease';
+  }
+
+  // ── Verifică răspunsul prin AJAX ──────────────────────
+  window.checkAnswer = function (index) {
+    if (answered) return;
+    answered = true;
+
+    // Dezactiveaza toate butoanele
+    document.querySelectorAll('.answer-btn').forEach(btn => btn.disabled = true);
+
+    // AJAX request pentru verificare
+    const url = `../PHP/trivia.php?action=check&id=${currentQ.id}&answer=${index}`;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          if (data.success) {
+            handleResult(data, index);
+          }
+        } catch(e) {
+          console.error('Parse error:', e);
+        }
+      }
+    };
+
+    xhr.send();
+  };
+
+  // ── Procesează rezultatul ─────────────────────────────
+  function handleResult(data, selectedIndex) {
+    const btns = document.querySelectorAll('.answer-btn');
+
+    // Coloreaza raspunsuri
+    btns.forEach((btn, i) => {
+      if (i === data.correctIndex) {
+        btn.classList.add('correct');
+      } else if (i === selectedIndex && !data.correct) {
+        btn.classList.add('wrong');
+      }
+    });
+
+    // Actualizare scor
+    score.total++;
+    if (data.correct) {
+      score.correct++;
+    } else {
+      score.wrong++;
+      // Shake pe raspunsul gresit
+      btns[selectedIndex].style.animation = 'shake .4s ease';
+    }
+    updateScoreDisplay();
+
+    // Afiseaza fact
+    const factBox  = document.getElementById('fact-box');
+    const factText = document.getElementById('fact-text');
+    if (factBox && factText) {
+      factText.textContent = data.fact;
+      factBox.style.display = 'block';
+    }
+
+    // Arata butonul urmator
+    document.getElementById('btn-next').style.display = 'block';
+  }
+
+  // ── Actualizare scor afișat ───────────────────────────
+  function updateScoreDisplay() {
+    document.getElementById('num-correct').textContent = score.correct;
+    document.getElementById('num-wrong').textContent   = score.wrong;
+    document.getElementById('num-total').textContent   = score.total;
+  }
+
+  // ── Reset scor ────────────────────────────────────────
+  window.resetScore = function () {
+    score = { correct: 0, wrong: 0, total: 0 };
+    updateScoreDisplay();
+    currentQ = null;
+
+    document.getElementById('question-card').style.display = 'none';
+    document.getElementById('btn-next').style.display      = 'none';
+    document.getElementById('btn-start').style.display     = 'block';
+  };
+
+  // ── Eroare ────────────────────────────────────────────
+  function showError(msg) {
+    document.getElementById('question-card').innerHTML = `
+      <div style="text-align:center; color:#ff9090; padding:20px;">
+        <p style="font-size:1.1rem;">⚠ ${msg}</p>
+      </div>
+    `;
+    document.getElementById('btn-start').style.display = 'block';
+    document.getElementById('btn-start').textContent   = '🔄 Încearcă din nou';
+  }
+
+})();
+</script>
+
+</body>
+</html>

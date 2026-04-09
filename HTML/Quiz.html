@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz — Care personaj Shrek ești tu?</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <style>
+        /* ── QUIZ PAGE STYLES ── */
+        #quiz-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 10px 0 60px;
+        }
+        #quiz-intro {
+            text-align: center;
+            padding: 34px 32px 28px;
+            background: rgba(0,0,0,.35);
+            border: 1px solid rgba(140,198,63,.25);
+            border-radius: 16px;
+            margin-bottom: 36px;
+        }
+        #quiz-intro h2 {
+            font-size: 1.7rem;
+            color: #c8f060;
+            letter-spacing: .14em;
+            margin-bottom: 10px;
+        }
+        #quiz-intro p {
+            color: #b0cc90;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        /* Progress bar */
+        #progress-wrap {
+            margin-bottom: 30px;
+        }
+        #progress-label {
+            font-size: .83rem;
+            color: #8cc63f;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            margin-bottom: 8px;
+        }
+        #progress-bar-bg {
+            background: rgba(0,0,0,.45);
+            border-radius: 99px;
+            height: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(140,198,63,.2);
+        }
+        #progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a8a1a, #8cc63f);
+            border-radius: 99px;
+            transition: width .5s cubic-bezier(.4,0,.2,1);
+            width: 0%;
+        }
+
+        /* Question card */
+        .question-card {
+            background: linear-gradient(160deg, rgba(30,60,10,.9), rgba(14,34,4,.97));
+            border: 1px solid rgba(140,198,63,.28);
+            border-radius: 16px;
+            padding: 32px 34px;
+            margin-bottom: 10px;
+            animation: fadeSlideIn .4s ease;
+        }
+        @keyframes fadeSlideIn {
+            from { opacity:0; transform: translateY(18px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+        .question-card h3 {
+            font-size: 1.18rem;
+            color: #c8f060;
+            margin-bottom: 22px;
+            line-height: 1.55;
+        }
+        .question-number {
+            display: inline-block;
+            background: #2d5a0e;
+            color: #8cc63f;
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .13em;
+            padding: 4px 12px;
+            border-radius: 99px;
+            margin-bottom: 14px;
+        }
+
+        /* Answers */
+        .answers-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .answer-btn {
+            background: rgba(0,0,0,.38);
+            border: 2px solid rgba(140,198,63,.22);
+            border-radius: 10px;
+            color: #c8ddb0;
+            font-size: .97rem;
+            font-family: 'Georgia', serif;
+            padding: 14px 20px;
+            cursor: pointer;
+            text-align: left;
+            transition: background .25s, border-color .25s, color .25s, transform .2s;
+            line-height: 1.5;
+        }
+        .answer-btn:hover {
+            background: rgba(140,198,63,.16);
+            border-color: #8cc63f;
+            color: #fff;
+            transform: translateX(6px);
+        }
+        .answer-btn.selected {
+            background: rgba(140,198,63,.28);
+            border-color: #c8f060;
+            color: #c8f060;
+        }
+        .answer-btn .answer-letter {
+            display: inline-block;
+            width: 26px; height: 26px;
+            background: #2d5a0e;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 26px;
+            font-size: .82rem;
+            font-weight: bold;
+            color: #8cc63f;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Nav buttons */
+        #quiz-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 22px;
+            gap: 12px;
+        }
+        .quiz-btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: .95rem;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+            cursor: pointer;
+            border: 2px solid #4a8a1a;
+            background: rgba(0,0,0,.35);
+            color: #c8f060;
+            transition: background .28s, transform .2s;
+            letter-spacing: .06em;
+        }
+        .quiz-btn:hover  { background: #4a8a1a; color: #fff; transform: translateY(-3px); }
+        .quiz-btn:active { transform: translateY(0); }
+        .quiz-btn:disabled { opacity: .38; cursor: not-allowed; transform: none; }
+        #btn-submit {
+            background: linear-gradient(135deg, #2d5a0e, #4a8a1a);
+            display: none;
+        }
+
+        /* RESULT */
+        #result-section {
+            display: none;
+            animation: fadeSlideIn .5s ease;
+        }
+        #result-card {
+            background: linear-gradient(160deg, rgba(30,60,10,.95), rgba(14,34,4,.98));
+            border: 2px solid rgba(140,198,63,.5);
+            border-radius: 18px;
+            padding: 40px 38px;
+            text-align: center;
+            box-shadow: 0 12px 48px rgba(140,198,63,.18);
+        }
+        #result-card h2 {
+            font-size: 1.15rem;
+            color: #8cc63f;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            margin-bottom: 6px;
+        }
+        #result-name {
+            font-size: 2.2rem;
+            color: #c8f060;
+            text-shadow: 0 0 20px rgba(140,198,63,.55);
+            margin: 12px 0;
+            letter-spacing: .1em;
+        }
+        #result-img {
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            border: 4px solid #4a8a1a;
+            object-fit: cover;
+            margin: 18px auto;
+            display: block;
+            box-shadow: 0 8px 28px rgba(0,0,0,.6);
+            transition: transform .4s;
+        }
+        #result-img:hover { transform: scale(1.07) rotate(3deg); }
+        #result-desc {
+            color: #c0dda0;
+            font-size: 1.03rem;
+            line-height: 1.78;
+            margin: 18px 0 26px;
+        }
+        #result-trait {
+            display: inline-block;
+            background: rgba(140,198,63,.18);
+            border: 1px solid rgba(140,198,63,.4);
+            border-radius: 99px;
+            padding: 7px 22px;
+            color: #8cc63f;
+            font-size: .9rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+        #btn-retry {
+            display: inline-block;
+            padding: 13px 34px;
+            background: rgba(0,0,0,.35);
+            border: 2px solid #4a8a1a;
+            border-radius: 8px;
+            color: #c8f060;
+            font-family: 'Georgia', serif;
+            font-size: .97rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background .28s, transform .22s;
+            letter-spacing: .07em;
+        }
+        #btn-retry:hover { background: #4a8a1a; color: #fff; transform: translateY(-3px); }
+
+        /* Swamp particles */
+        #particles-canvas {
+            position: fixed; top:0; left:0;
+            width:100%; height:100%;
+            pointer-events:none;
+            z-index:0;
+            opacity: .55;
+        }
+        #quiz-container { position: relative; z-index: 1; }
+    </style>
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+
+<div id="header">
+    <h1>SHREK QUIZ</h1>
+    <p>Descoperă ce personaj ești!</p>
+</div>
+
+<div id="nav">
+    <ul>
+        <li><a href="../index.html">Acasă</a></li>
+        <li><a href="shrek1.html">Film 1</a></li>
+        <li><a href="shrek2.html">Film 2</a></li>
+        <li><a href="shrek3.html">Film 3</a></li>
+        <li><a href="shrek4.html">Film 4</a></li>
+        <li><a href="Quiz.html" class="active">Quiz</a></li>
+    </ul>
+</div>
+
+<div id="main">
+    <div id="quiz-container">
+
+        <div id="quiz-intro">
+            <h2>🧅 Care personaj Shrek ești tu?</h2>
+            <p>Răspunde la 6 întrebări și află cu ce personaj din universul Shrek te identifici cel mai bine.<br>Fii sincer — mlaștina nu minte! 🐉</p>
+        </div>
+
+        <!-- FORM -->
+        <div id="quiz-form">
+            <div id="progress-wrap">
+                <div id="progress-label">Întrebarea <span id="q-current">1</span> din <span id="q-total">6</span></div>
+                <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
+            </div>
+
+            <div id="question-display"></div>
+
+            <div id="quiz-nav">
+                <button class="quiz-btn" id="btn-prev" onclick="prevQuestion()" disabled>← Înapoi</button>
+                <button class="quiz-btn" id="btn-next" onclick="nextQuestion()">Înainte →</button>
+                <button class="quiz-btn" id="btn-submit" onclick="showResult()">Află rezultatul 🧅</button>
+            </div>
+        </div>
+
+        <!-- RESULT -->
+        <div id="result-section">
+            <div id="result-card">
+                <h2>Ești</h2>
+                <div id="result-name"></div>
+                <img id="result-img" src="" alt="Personaj">
+                <div id="result-trait"></div>
+                <div id="result-desc"></div>
+                <button id="btn-retry" onclick="resetQuiz()">🔄 Încearcă din nou</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="footer">
+    <p>Realizat: Cozlovschi Ana</p>
+</div>
+
+<script>
+    // ══════════════════════════════════════════
+    //  QUIZ DATA
+    // ══════════════════════════════════════════
+    const questions = [
+        {
+            text: "Cum îți petreci weekendul ideal?",
+            answers: [
+                { text: "Singur acasă, liniște deplină", char: "shrek" },
+                { text: "Cu prietenii, cu muzică și petrecere", char: "donkey" },
+                { text: "La cumpărături sau la salon", char: "fiona" },
+                { text: "Planificând cum să câștig putere", char: "farquaad" }
+            ]
+        },
+        {
+            text: "Ce faci când cineva îți calcă granițele?",
+            answers: [
+                { text: "Îi spun clar să plece — e teritoriul meu", char: "shrek" },
+                { text: "Încerc să îl fac prieten ca să nu mai fie problemă", char: "donkey" },
+                { text: "Mă descurc singur, sunt suficient de puternic", char: "fiona" },
+                { text: "Apelez la reguli și structuri în avantajul meu", char: "farquaad" }
+            ]
+        },
+        {
+            text: "Care e cel mai mare defect al tău?",
+            answers: [
+                { text: "Sunt prea retras și nu las pe nimeni aproape", char: "shrek" },
+                { text: "Vorbesc mult, uneori prea mult", char: "donkey" },
+                { text: "Nu cer ajutor chiar dacă am nevoie", char: "fiona" },
+                { text: "Vreau mereu să am totul sub control", char: "farquaad" }
+            ]
+        },
+        {
+            text: "Cum ești cu prietenii noi?",
+            answers: [
+                { text: "Am nevoie de timp, nu mă deschid ușor", char: "shrek" },
+                { text: "Devin prieten cu toată lumea instantaneu", char: "donkey" },
+                { text: "Respect, dar evaluez înainte să am încredere", char: "fiona" },
+                { text: "Prietenii sunt mai degrabă aliați utili", char: "farquaad" }
+            ]
+        },
+        {
+            text: "Ce muzică asculți?",
+            answers: [
+                { text: "Ceva lent și melancolic, singur", char: "shrek" },
+                { text: "Dans, pop, ceva energic și voios", char: "donkey" },
+                { text: "Rock sau ceva cu caracter și putere", char: "fiona" },
+                { text: "Muzică clasică sau opera — rafinament", char: "farquaad" }
+            ]
+        },
+        {
+            text: "Care e cel mai important lucru pentru tine?",
+            answers: [
+                { text: "Familia și cei dragi", char: "shrek" },
+                { text: "Să fiu iubit și acceptat de toți", char: "donkey" },
+                { text: "Libertatea și independența", char: "fiona" },
+                { text: "Puterea și respectul celorlalți", char: "farquaad" }
+            ]
+        }
+    ];
+
+    const characters = {
+        shrek: {
+            name: "SHREK",
+            img: "https://pbs.twimg.com/profile_images/829904718101041153/5BiJNe71_400x400.jpg",
+            trait: "Introvert autentic",
+            desc: "Ești ca Shrek — un suflet profund care preferă liniștea, dar are o inimă uriașă. Ai nevoie de spațiu personal și nu te deschizi ușor, dar odată ce cineva câștigă încrederea ta, ești cel mai loial prieten posibil. Nu te lași influențat de părerile altora — ești 100% tu însuți."
+        },
+        donkey: {
+            name: "MĂGARUL",
+            img: "https://citaty.info/files/portraits/osel.jpg",
+            trait: "Suflet pozitiv irezistibil",
+            desc: "Ești ca Măgarul — optimist, vorbăreț și plin de energie! Îți faci prieteni oriunde mergi și reușești să aduci bucurie în viețile celor din jur. Uneori poate pari prea insistent, dar de fapt tot ce vrei este să fii iubit — și asta e ceva frumos."
+        },
+        fiona: {
+            name: "FIONA",
+            img: "https://intheirownleague.com/wp-content/uploads/2021/05/fiona-main.jpg",
+            trait: "Puternic și independent",
+            desc: "Ești ca Fiona — puternic, capabil și independent. Nu ai nevoie să fii salvat, îți rezolvi singur problemele. Ai un secret sau o latură pe care nu o arăți tuturor, dar aceasta este tocmai ceea ce te face special. Valorizezi autenticitatea mai presus de orice."
+        },
+        farquaad: {
+            name: "LORD FARQUAAD",
+            img: "https://pbs.twimg.com/media/GZ7R490WIAAbRdK.jpg",
+            trait: "Ambițios și perfecționist",
+            desc: "Ești ca Lord Farquaad — ambițios, organizat și obsesionat de ordine. Vrei ca totul să fie perfect și sub control. Ești un lider natural, dar uneori uiți că și oamenii din jurul tău contează. Încearcă să mai lași garda jos — nu totul trebuie să fie perfect!"
+        }
+    };
+
+    // ══════════════════════════════════════════
+    //  STATE
+    // ══════════════════════════════════════════
+    let currentQ = 0;
+    const answers = new Array(questions.length).fill(null);
+
+    // ══════════════════════════════════════════
+    //  RENDER
+    // ══════════════════════════════════════════
+    function renderQuestion() {
+        const q = questions[currentQ];
+        const letters = ['A','B','C','D'];
+        const display = document.getElementById('question-display');
+
+        display.innerHTML = `
+    <div class="question-card">
+      <span class="question-number">Întrebarea ${currentQ + 1}</span>
+      <h3>${q.text}</h3>
+      <div class="answers-grid">
+        ${q.answers.map((a, i) => `
+          <button class="answer-btn ${answers[currentQ] === i ? 'selected' : ''}"
+                  onclick="selectAnswer(${i})">
+            <span class="answer-letter">${letters[i]}</span>${a.text}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+        // Progress
+        document.getElementById('q-current').textContent = currentQ + 1;
+        const pct = (currentQ / questions.length) * 100;
+        document.getElementById('progress-bar-fill').style.width = pct + '%';
+
+        // Buttons
+        document.getElementById('btn-prev').disabled = currentQ === 0;
+        const isLast = currentQ === questions.length - 1;
+        document.getElementById('btn-next').style.display = isLast ? 'none' : 'inline-block';
+        document.getElementById('btn-submit').style.display = isLast ? 'inline-block' : 'none';
+    }
+
+    function selectAnswer(index) {
+        answers[currentQ] = index;
+        renderQuestion();
+    }
+
+    function nextQuestion() {
+        if (answers[currentQ] === null) {
+            // shake effect
+            const card = document.querySelector('.question-card');
+            card.style.animation = 'none';
+            card.offsetHeight;
+            card.style.animation = 'shake .35s ease';
+            return;
+        }
+        if (currentQ < questions.length - 1) {
+            currentQ++;
+            renderQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQ > 0) {
+            currentQ--;
+            renderQuestion();
+        }
+    }
+
+    function showResult() {
+        if (answers[currentQ] === null) return;
+
+        // Count votes
+        const votes = { shrek: 0, donkey: 0, fiona: 0, farquaad: 0 };
+        questions.forEach((q, i) => {
+            if (answers[i] !== null) {
+                votes[q.answers[answers[i]].char]++;
+            }
+        });
+
+        // Winner
+        const winner = Object.entries(votes).sort((a,b) => b[1]-a[1])[0][0];
+        const ch = characters[winner];
+
+        document.getElementById('result-name').textContent = ch.name;
+        document.getElementById('result-img').src = ch.img;
+        document.getElementById('result-img').alt = ch.name;
+        document.getElementById('result-trait').textContent = ch.trait;
+        document.getElementById('result-desc').textContent = ch.desc;
+
+        // Transition
+        document.getElementById('quiz-form').style.display = 'none';
+        document.getElementById('result-section').style.display = 'block';
+
+        // Progress to 100
+        document.getElementById('progress-bar-fill').style.width = '100%';
+
+        // Confetti-like particles burst
+        triggerBurst();
+    }
+
+    function resetQuiz() {
+        currentQ = 0;
+        answers.fill(null);
+        document.getElementById('quiz-form').style.display = 'block';
+        document.getElementById('result-section').style.display = 'none';
+        renderQuestion();
+    }
+
+    // Shake keyframe
+    const style = document.createElement('style');
+    style.textContent = `
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-8px)}
+    40%{transform:translateX(8px)}
+    60%{transform:translateX(-5px)}
+    80%{transform:translateX(5px)}
+  }
+`;
+    document.head.appendChild(style);
+
+    // ══════════════════════════════════════════
+    //  PARTICLES (swamp fireflies)
+    // ══════════════════════════════════════════
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const particles = Array.from({length: 55}, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 2.5 + 0.8,
+        speedX: (Math.random() - .5) * .45,
+        speedY: (Math.random() - .5) * .45,
+        opacity: Math.random(),
+        opacityDir: (Math.random() - .5) * .018,
+        color: Math.random() > .6 ? '#8cc63f' : '#c8f060'
+    }));
+
+    let burstParticles = [];
+
+    function triggerBurst() {
+        for (let i = 0; i < 60; i++) {
+            burstParticles.push({
+                x: window.innerWidth / 2,
+                y: window.innerHeight / 2,
+                vx: (Math.random() - .5) * 8,
+                vy: (Math.random() - .5) * 8,
+                r: Math.random() * 4 + 1.5,
+                opacity: 1,
+                color: Math.random() > .5 ? '#8cc63f' : '#c8f060'
+            });
+        }
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(p => {
+            p.x += p.speedX; p.y += p.speedY;
+            p.opacity += p.opacityDir;
+            if (p.opacity <= 0 || p.opacity >= 1) p.opacityDir *= -1;
+            if (p.x < 0) p.x = canvas.width;
+            if (p.x > canvas.width) p.x = 0;
+            if (p.y < 0) p.y = canvas.height;
+            if (p.y > canvas.height) p.y = 0;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.opacity * .7;
+            ctx.fill();
+        });
+
+        burstParticles = burstParticles.filter(p => p.opacity > 0);
+        burstParticles.forEach(p => {
+            p.x += p.vx; p.y += p.vy;
+            p.vy += .12;
+            p.opacity -= .022;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.opacity;
+            ctx.fill();
+        });
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+
+    // Init
+    renderQuestion();
+</script>
+
+</body>
+</html>
